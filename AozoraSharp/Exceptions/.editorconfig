@@ -1,0 +1,4 @@
+[*.cs]
+
+# プライマリコンストラクタを使用しない
+dotnet_diagnostic.IDE0290.severity = none
