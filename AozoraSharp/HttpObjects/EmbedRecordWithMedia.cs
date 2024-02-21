@@ -1,3 +1,5 @@
+using AozoraSharp.Constants;
+
 namespace AozoraSharp.HttpObjects;
 
 public abstract record EmbedRecordWithMedia : Embed
@@ -10,5 +12,5 @@ public abstract record EmbedRecordWithMedia : Embed
         Record = record;
     }
 
-    public override sealed string ATType { get; } = "app.bsky.embed.recordWithMedia";
+    public override sealed string ATType { get; } = ATTypeName.EmbedRecordWithMedia;
 }

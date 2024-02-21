@@ -1,3 +1,4 @@
+using AozoraSharp.Constants;
 using AozoraSharp.HttpObjects.Interfaces;
 using System.Text.Json.Serialization;
 
@@ -15,9 +16,9 @@ public readonly record struct Blob : IATType
         Ref = @ref;
         MimeType = mimeType;
         Size = size;
-        ATType = "blob";
+        ATType = ATTypeName.Blob;
     }
 
     [JsonPropertyName("$type")]
-    public string ATType { get; } = "blob";
+    public string ATType { get; } = ATTypeName.Blob;
 }
