@@ -4,7 +4,7 @@ public record EmbedRecordWithImages : EmbedRecordWithMedia
 {
     public override EmbedImages Media { get; }
 
-    public EmbedRecordWithImages(EmbedRecord record, EmbedImages media) : base(record, media)
+    public EmbedRecordWithImages(EmbedRecord record, EmbedImages media) : base(record)
     {
         Media = media;
     }

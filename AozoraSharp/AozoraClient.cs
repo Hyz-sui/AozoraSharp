@@ -1,3 +1,6 @@
+using AozoraSharp.AozoraObjects;
+using AozoraSharp.Exceptions;
+using AozoraSharp.HttpObjects;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -6,9 +9,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using AozoraSharp.AozoraObjects;
-using AozoraSharp.Exceptions;
-using AozoraSharp.HttpObjects;
 
 namespace AozoraSharp;
 
