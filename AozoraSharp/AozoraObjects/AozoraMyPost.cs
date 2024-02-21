@@ -1,3 +1,4 @@
+using AozoraSharp.Constants;
 using AozoraSharp.HttpObjects;
 using AozoraSharp.HttpObjects.Interfaces;
 using System;
@@ -31,6 +32,6 @@ public class AozoraMyPost(
     {
         logger.Debug("Deleting post");
         var request = new DeleteRecordRequest(Author.Did, Collection, Rkey);
-        await Author.Client.PostCustomXrpcAsync("com.atproto.repo.deleteRecord", request, cancellationToken);
+        await Author.Client.PostCustomXrpcAsync(ATEndpoint.DeleteRecord, request, cancellationToken);
     }
 }

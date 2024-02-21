@@ -1,4 +1,5 @@
 using AozoraSharp.AozoraObjects;
+using AozoraSharp.Constants;
 using AozoraSharp.Exceptions;
 using AozoraSharp.HttpObjects;
 using System;
@@ -61,7 +62,7 @@ public class AozoraClient : AozoraObject, IDisposable
     {
         logger.Info($"Creating session as {id}");
         var request = new CreateSessionRequest(id, password);
-        var response = await PostCustomXrpcAsync<CreateSessionRequest, CreateSessionResponse>("com.atproto.server.createSession", request, cancellationToken);
+        var response = await PostCustomXrpcAsync<CreateSessionRequest, CreateSessionResponse>(ATEndpoint.CreateSession, request, cancellationToken);
         var user = new AozoraMyUser(response, this);
         CurrentUser = user;
         RenewToken(response.AccessJwt, response.RefreshJwt);
@@ -73,7 +74,7 @@ public class AozoraClient : AozoraObject, IDisposable
     public async Task RefreshSessionAsync(CancellationToken cancellationToken = default)
     {
         logger.Info("Refreshing session");
-        var response = await PostCustomXrpcWithRefreshTokenAsync<RefreshSessionResponse>("com.atproto.server.refreshSession", cancellationToken);
+        var response = await PostCustomXrpcWithRefreshTokenAsync<RefreshSessionResponse>(ATEndpoint.RefreshSession, cancellationToken);
         RenewToken(response.AccessJwt, response.RefreshJwt);
     }
     /// <summary>
@@ -82,7 +83,7 @@ public class AozoraClient : AozoraObject, IDisposable
     public async Task DeleteSessionAsync(CancellationToken cancellationToken = default)
     {
         logger.Info("Deleting session");
-        await PostCustomXrpcAsync("com.atproto.server.deleteSession", cancellationToken);
+        await PostCustomXrpcAsync(ATEndpoint.DeleteSession, cancellationToken);
     }
 
     private void RenewToken(string accessToken, string refreshToken)

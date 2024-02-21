@@ -35,7 +35,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
         logger.Debug("Creating post");
         var httpPost = new Post(text, DateTime.UtcNow.ToString("o"), langs, embed);
         var request = new CreatePostRequest(Did, collection, httpPost);
-        var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>("com.atproto.repo.createRecord", request, cancellationToken);
+        var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
         var aozoraPost = new AozoraMyPost(this, httpPost, response, collection);
         return aozoraPost;
     }
@@ -182,7 +182,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     internal async Task<Blob> UploadBlobAsync(IReadOnlyList<byte> bytes, string mimeType, CancellationToken cancellationToken = default)
     {
         logger.Debug("Uploading blob");
-        var response = await Client.PostCustomXrpcAsync<UploadBlobResponse>("com.atproto.repo.uploadBlob", mimeType, bytes, cancellationToken);
+        var response = await Client.PostCustomXrpcAsync<UploadBlobResponse>(ATEndpoint.UploadBlob, mimeType, bytes, cancellationToken);
         logger.Debug("Finished uploading blob");
         return response.Blob;
     }
@@ -193,7 +193,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
         var reply = new Reply(rootRef, parentRef);
         var httpPost = new Post(text, DateTime.UtcNow.ToString("o"), langs, embed, reply);
         var request = new CreatePostRequest(Did, collection, httpPost);
-        var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>("com.atproto.repo.createRecord", request, cancellationToken);
+        var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
         var aozoraPost = new AozoraMyPost(this, httpPost, response, collection)
         {
             ReplyParent = parent,
