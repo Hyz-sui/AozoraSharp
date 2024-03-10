@@ -1,10 +1,10 @@
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using AozoraSharp.Embeds;
 using AozoraSharp.Tools.FileTools;
 using MimeMapping;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace AozoraSharp.Utilities;
 

@@ -2,5 +2,5 @@ namespace AozoraSharp.HttpObjects.Interfaces;
 
 public interface IATType
 {
-    public string ATType { get; }
+    // public string ATType { get; }
 }

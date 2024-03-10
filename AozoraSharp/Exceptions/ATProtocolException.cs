@@ -1,5 +1,5 @@
-using AozoraSharp.HttpObjects;
 using System;
+using AozoraSharp.HttpObjects;
 
 namespace AozoraSharp.Exceptions;
 

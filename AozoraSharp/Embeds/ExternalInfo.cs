@@ -1,7 +1,7 @@
-using AozoraSharp.AozoraObjects;
-using AozoraSharp.HttpObjects;
 using System.Threading;
 using System.Threading.Tasks;
+using AozoraSharp.AozoraObjects;
+using AozoraSharp.HttpObjects;
 
 namespace AozoraSharp.Embeds;
 

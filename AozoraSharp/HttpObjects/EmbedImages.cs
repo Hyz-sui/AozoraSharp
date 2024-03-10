@@ -1,9 +1,6 @@
-using AozoraSharp.Constants;
 using System.Collections.Generic;
+using AozoraSharp.HttpObjects.Interfaces;
 
 namespace AozoraSharp.HttpObjects;
 
-public record EmbedImages(IReadOnlyList<EmbedImage> Images) : Embed
-{
-    public override string ATType { get; } = ATTypeName.EmbedImages;
-}
+public record EmbedImages(IReadOnlyList<Image> Images) : Embed, IEmbedMedia;

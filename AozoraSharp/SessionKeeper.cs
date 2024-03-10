@@ -1,8 +1,8 @@
-using AozoraSharp.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Timers;
+using AozoraSharp.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AozoraSharp;
 

@@ -1,17 +1,36 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using AozoraSharp.Constants;
 using AozoraSharp.Embeds;
 using AozoraSharp.HttpObjects;
 using AozoraSharp.HttpObjects.Interfaces;
 using AozoraSharp.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace AozoraSharp.AozoraObjects;
 
-public class AozoraPost(AozoraUser author, string text, DateTime createdAt, string collection, string uri, string cid, IEmbed embed = null) : AozoraObject
+public class AozoraPost(
+    AozoraUser author,
+    string text,
+    DateTime createdAt,
+    string uri,
+    string cid,
+    IEmbed embed = default,
+    string via = default) : AozoraObject
 {
+    public AozoraPost(AozoraUser author, string uri, string cid, Post post) : this(
+        author,
+        post.Text,
+#pragma warning disable S6580
+        DateTime.Parse(post.CreatedAt),
+#pragma warning restore S6580
+        uri,
+        cid,
+        post.Embed,
+        post.Via)
+    { }
+
     /// <summary>
     /// the author of the post
     /// </summary>
@@ -24,10 +43,6 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// time the post was created at
     /// </summary>
     public DateTime CreatedAt { get; } = createdAt;
-    /// <summary>
-    /// collection that the post belongs
-    /// </summary>
-    public string Collection { get; } = collection;
     /// <summary>
     /// post uri
     /// </summary>
@@ -44,6 +59,7 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// post embed
     /// </summary>
     public IEmbed Embed { get; } = embed;
+    public string Via { get; } = via;
 
     /// <summary>
     /// Reply parent of the post.<br/>null if the post is not a reply.
@@ -61,9 +77,9 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="text">reply text</param>
     /// <param name="langs">language codes of the reply</param>
     /// <param name="embed">embed to attach</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IEmbed embed = null, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IEmbed embed = null, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         logger.Debug("Creating reply");
         var root = ReplyRoot ?? this;
@@ -76,9 +92,9 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="text">reply text</param>
     /// <param name="langs">language codes of the reply</param>
     /// <param name="images">images to attach</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embedImages = await author.UploadImagesAsync(images, cancellationToken);
         return await ReplyAsync(author, text, langs, embedImages, collection, cancellationToken);
@@ -90,9 +106,9 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="text">post text</param>
     /// <param name="langs">language codes of the post</param>
     /// <param name="postToQuote">post to quote</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, AozoraPost postToQuote, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embedPost = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
         return await ReplyAsync(author, text, langs, embedPost, collection, cancellationToken);
@@ -104,9 +120,9 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="text">post text</param>
     /// <param name="langs">language codes of the post</param>
     /// <param name="uri">link to external website</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var externalInfo = await WebUtility.FetchExternalInfoFromUriAsync(uri, author.Client.HttpClient);
         return await ReplyAsync(author, text, langs, externalInfo, collection, cancellationToken);
@@ -118,9 +134,9 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="text">post text</param>
     /// <param name="langs">language codes of the post</param>
     /// <param name="externalInfo">informations of the website card</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var thumb = await externalInfo.UploadThumbnailAsync(author, cancellationToken);
         var external = new External(externalInfo.Uri, externalInfo.Title, externalInfo.Description, thumb);
@@ -134,9 +150,9 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="text">post text</param>
     /// <param name="langs">language codes of the post</param>
     /// <param name="uri">link to external website</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, AozoraPost postToQuote, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var externalInfo = await WebUtility.FetchExternalInfoFromUriAsync(uri, author.Client.HttpClient);
         return await ReplyAsync(author, text, langs, externalInfo, postToQuote, collection, cancellationToken);
@@ -149,15 +165,15 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="langs">language codes of the post</param>
     /// <param name="postToQuote">post to quote</param>
     /// <param name="externalInfo">informations of the website card</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, AozoraPost postToQuote, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embedRecord = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
         var thumb = await externalInfo.UploadThumbnailAsync(author, cancellationToken);
         var external = new External(externalInfo.Uri, externalInfo.Title, externalInfo.Description, thumb);
         var embedExternal = new EmbedExternal(external);
-        var embedRecordWithExternal = new EmbedRecordWithExternal(embedRecord, embedExternal);
+        var embedRecordWithExternal = new EmbedRecordWithMedia(embedRecord, embedExternal);
         return await ReplyAsync(author, text, langs, embedRecordWithExternal, collection, cancellationToken);
     }
     /// <summary>
@@ -168,13 +184,13 @@ public class AozoraPost(AozoraUser author, string text, DateTime createdAt, stri
     /// <param name="langs">language codes of the post</param>
     /// <param name="postToQuote">post to quote</param>
     /// <param name="images">informations of the images</param>
-    /// <param name="collection">Collection that you want to add the post to.<br/>Normally, you don't have to change this.</param>
+    /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, AozoraPost postToQuote, string collection = CommonConstant.DefaultPostCollection, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embedRecord = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
         var embedImages = await author.UploadImagesAsync(images, cancellationToken);
-        var embedRecordWithImages = new EmbedRecordWithImages(embedRecord, embedImages);
+        var embedRecordWithImages = new EmbedRecordWithMedia(embedRecord, embedImages);
         return await ReplyAsync(author, text, langs, embedRecordWithImages, collection, cancellationToken);
     }
 }

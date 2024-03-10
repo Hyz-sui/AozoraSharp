@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AozoraSharp", "AozoraSharp\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AozoraSharp.Test", "AozoraSharp.Test\AozoraSharp.Test.csproj", "{4788D672-1966-4558-9FBA-8F1ED09B7F0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AozoraSharp.Generator", "AozoraSharp.Generator\AozoraSharp.Generator.csproj", "{FCC2FF22-F5E4-4F33-AE51-FE74F26E0481}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{4788D672-1966-4558-9FBA-8F1ED09B7F0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4788D672-1966-4558-9FBA-8F1ED09B7F0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4788D672-1966-4558-9FBA-8F1ED09B7F0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCC2FF22-F5E4-4F33-AE51-FE74F26E0481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCC2FF22-F5E4-4F33-AE51-FE74F26E0481}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCC2FF22-F5E4-4F33-AE51-FE74F26E0481}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCC2FF22-F5E4-4F33-AE51-FE74F26E0481}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

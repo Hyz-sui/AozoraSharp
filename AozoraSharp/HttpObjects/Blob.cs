@@ -1,6 +1,6 @@
+using System.Text.Json.Serialization;
 using AozoraSharp.Constants;
 using AozoraSharp.HttpObjects.Interfaces;
-using System.Text.Json.Serialization;
 
 namespace AozoraSharp.HttpObjects;
 
