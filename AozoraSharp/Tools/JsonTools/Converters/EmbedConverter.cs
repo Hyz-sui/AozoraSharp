@@ -6,7 +6,7 @@ using AozoraSharp.Exceptions;
 using AozoraSharp.HttpObjects;
 using AozoraSharp.HttpObjects.Interfaces;
 
-namespace AozoraSharp.Tools.JsonTools;
+namespace AozoraSharp.Tools.JsonTools.Converters;
 
 [CustomJsonConverter]
 public class EmbedConverter : CustomJsonConverter<IEmbed>

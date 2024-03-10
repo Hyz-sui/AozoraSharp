@@ -7,7 +7,7 @@ using AozoraSharp.HttpObjects;
 using AozoraSharp.HttpObjects.Interfaces;
 using AozoraSharp.HttpObjects.Records;
 
-namespace AozoraSharp.Tools.JsonTools;
+namespace AozoraSharp.Tools.JsonTools.Converters;
 
 [CustomJsonConverter]
 public class RecordValueConverter : CustomJsonConverter<IRecordValue>
