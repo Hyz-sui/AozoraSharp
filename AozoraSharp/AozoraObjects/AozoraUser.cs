@@ -11,18 +11,47 @@ namespace AozoraSharp.AozoraObjects;
 /// Represents an account.
 /// </summary>
 public class AozoraUser(
-    string handle,
-    string did,
-    string displayName,
-    string description,
-    string avatarUrl,
-    string bannerUrl,
-    int followersCount,
-    int followsCount,
-    int postsCount,
-    ProfileAssociatedInfo associatedInfo,
-    ProfileLabelsInfo labelsInfo) : AozoraObject
+        string handle,
+        string did,
+        string displayName,
+        string description,
+        string avatarUrl,
+        string bannerUrl,
+        int followersCount,
+        int followsCount,
+        int postsCount,
+        ProfileAssociatedInfo associatedInfo,
+        ProfileLabelsInfo labelsInfo) : AozoraObject
 {
+    public AozoraUser(
+        AozoraMyUser myUser,
+        string handle,
+        string did,
+        string displayName,
+        string description,
+        string avatarUrl,
+        string bannerUrl,
+        int followersCount,
+        int followsCount,
+        int postsCount,
+        ProfileAssociatedInfo associatedInfo,
+        ProfileLabelsInfo labelsInfo) : this(
+            handle,
+            did,
+            displayName,
+            description,
+            avatarUrl,
+            bannerUrl,
+            followersCount,
+            followsCount,
+            postsCount,
+            associatedInfo,
+            labelsInfo)
+    {
+        MyUser = myUser;
+    }
+    public override AozoraMyUser MyUser { get; }
+
     /// <summary>
     /// Handle of the account.<br/>e.g. hyze.bsky.social
     /// </summary>
@@ -41,10 +70,11 @@ public class AozoraUser(
     public ProfileAssociatedInfo AssociatedInfo { get; } = associatedInfo;
     public ProfileLabelsInfo LabelsInfo { get; } = labelsInfo;
 
-    public async Task<FetchedPosts> FetchPostsAsync(AozoraClient worker, int limit = 50, string cursor = null, bool reverse = false, CancellationToken cancellationToken = default)
+
+    public async Task<FetchedPosts> FetchPostsAsync(int limit = 50, string cursor = null, bool reverse = false, CancellationToken cancellationToken = default)
     {
         logger.Debug("fetching posts");
-        var response = await worker.GetCustomXrpcAsync<FetchPostsResponse>(
+        var response = await MyUser.Client.GetCustomXrpcAsync<FetchPostsResponse>(
             ATEndpoint.ListRecords,
             [
                 new("repo", Did),
@@ -63,20 +93,20 @@ public class AozoraUser(
             {
                 throw new InvalidRecordValueException(typeof(Post), record.Value?.GetType());
             }
-            var aozoraPost = new AozoraPost(this, record.Uri, record.Cid, post);
+            var aozoraPost = new AozoraPost(MyUser, this, record.Uri, record.Cid, post);
             posts[i] = aozoraPost;
         }
         var fetchedPosts = new FetchedPosts(response.Cursor, posts);
         return fetchedPosts;
     }
-    public LazyUserPosts GetLazyPosts(AozoraClient worker, bool reverse = false, int intervalMilliseconds = 5000)
+    public LazyUserPosts GetLazyPosts(bool reverse = false, int intervalMilliseconds = 5000)
     {
-        return new LazyUserPosts(worker, this, reverse, intervalMilliseconds);
+        return new LazyUserPosts(this, reverse, intervalMilliseconds);
     }
 
-    public async Task<Record> FetchRecordAsync(AozoraClient worker, string collection, string recordKey, CancellationToken cancellationToken = default)
+    public async Task<Record> FetchRecordAsync(string collection, string recordKey, CancellationToken cancellationToken = default)
     {
-        var record = await worker.GetCustomXrpcAsync<Record>("com.atproto.repo.getRecord", [new("repo", Did), new("collection", collection), new("rkey", recordKey)], cancellationToken);
+        var record = await MyUser.Client.GetCustomXrpcAsync<Record>("com.atproto.repo.getRecord", [new("repo", Did), new("collection", collection), new("rkey", recordKey)], cancellationToken);
         return record;
     }
 }

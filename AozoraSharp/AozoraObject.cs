@@ -1,3 +1,4 @@
+using AozoraSharp.AozoraObjects;
 using AozoraSharp.Logging;
 
 namespace AozoraSharp;
@@ -10,4 +11,6 @@ public abstract class AozoraObject
     }
 
     protected readonly ILogger logger;
+
+    public abstract AozoraMyUser MyUser { get; }
 }

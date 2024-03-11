@@ -8,9 +8,8 @@ using AozoraSharp.Core;
 
 namespace AozoraSharp.BlueskyModels;
 
-public sealed class LazyUserPosts(AozoraClient worker, AozoraUser user, bool reverse, int intervalMilliseconds) : LazyList<AozoraPost>
+public sealed class LazyUserPosts(AozoraUser user, bool reverse, int intervalMilliseconds) : LazyList<AozoraPost>
 {
-    private readonly AozoraClient worker = worker;
     private readonly AozoraUser user = user;
     private readonly bool reverse = reverse;
     private readonly int intervalMilliseconds = intervalMilliseconds;
@@ -33,7 +32,7 @@ public sealed class LazyUserPosts(AozoraClient worker, AozoraUser user, bool rev
                 await Task.Delay(waitingMilliseconds, cancellationToken);
             }
         }
-        var posts = await user.FetchPostsAsync(worker, CommonConstant.ListRecordsMaxLimit, cursor, reverse, cancellationToken);
+        var posts = await user.FetchPostsAsync(CommonConstant.ListRecordsMaxLimit, cursor, reverse, cancellationToken);
         lastFetchTimeUtc = DateTime.UtcNow;
         if (posts.Count <= 0)
         {

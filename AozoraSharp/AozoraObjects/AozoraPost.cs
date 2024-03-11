@@ -11,6 +11,7 @@ using AozoraSharp.Utilities;
 namespace AozoraSharp.AozoraObjects;
 
 public class AozoraPost(
+    AozoraMyUser myUser,
     AozoraUser author,
     string text,
     DateTime createdAt,
@@ -19,7 +20,8 @@ public class AozoraPost(
     IEmbed embed = default,
     string via = default) : AozoraObject
 {
-    public AozoraPost(AozoraUser author, string uri, string cid, Post post) : this(
+    public AozoraPost(AozoraMyUser myUser, AozoraUser author, string uri, string cid, Post post) : this(
+        myUser,
         author,
         post.Text,
 #pragma warning disable S6580
@@ -30,6 +32,8 @@ public class AozoraPost(
         post.Embed,
         post.Via)
     { }
+
+    public override AozoraMyUser MyUser { get; } = myUser;
 
     /// <summary>
     /// the author of the post

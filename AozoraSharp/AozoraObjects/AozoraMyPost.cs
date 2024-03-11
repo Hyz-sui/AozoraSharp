@@ -9,16 +9,18 @@ using AozoraSharp.HttpObjects.Interfaces;
 namespace AozoraSharp.AozoraObjects;
 
 public class AozoraMyPost(
+    AozoraMyUser myUser,
     AozoraMyUser author,
     string text,
     DateTime createdAt,
     string uri,
     string cid,
-    IEmbed embed = null) : AozoraPost(author, text, createdAt, uri, cid, embed)
+    IEmbed embed = null) : AozoraPost(myUser, author, text, createdAt, uri, cid, embed)
 {
     public override AozoraMyUser Author { get; } = author;
 
-    public AozoraMyPost(AozoraMyUser author, Post post, CreateRecordResponse createRecordResponse) : this(
+    public AozoraMyPost(AozoraMyUser myUser, AozoraMyUser author, Post post, CreateRecordResponse createRecordResponse) : this(
+        myUser,
         author,
         post.Text,
         DateTime.ParseExact(post.CreatedAt, "o", DateTimeFormatInfo.InvariantInfo),

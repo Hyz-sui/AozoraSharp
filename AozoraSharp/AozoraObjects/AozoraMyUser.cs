@@ -26,6 +26,8 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     new(myProfile.Associated),
     new(myProfile.Labels))
 {
+    public override AozoraMyUser MyUser => this;
+
     /// <summary>
     /// client that user belongs
     /// </summary>
@@ -52,7 +54,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
         var httpPost = new Post(text, DateTime.UtcNow.ToString("o"), langs, embed, Via: Client.Option.PostVia);
         var request = new CreatePostRequest(Did, collection, httpPost);
         var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
-        var aozoraPost = new AozoraMyPost(this, httpPost, response);
+        var aozoraPost = new AozoraMyPost(this, this, httpPost, response);
         return aozoraPost;
     }
     /// <summary>
@@ -162,6 +164,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     {
         var profile = await Client.GetCustomXrpcAsync<Profile>(ATEndpoint.GetProfile, [new AozoraClient.UrlParameter("actor", identifier)], cancellationToken);
         var user = new AozoraUser(
+            this,
             profile.Handle,
             profile.Did,
             profile.DisplayName,
@@ -235,7 +238,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
         var httpPost = new Post(text, DateTime.UtcNow.ToString("o"), langs, embed, reply, Client.Option.PostVia);
         var request = new CreatePostRequest(Did, collection, httpPost);
         var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
-        var aozoraPost = new AozoraMyPost(this, httpPost, response)
+        var aozoraPost = new AozoraMyPost(this, this, httpPost, response)
         {
             ReplyParent = parent,
             ReplyRoot = root,

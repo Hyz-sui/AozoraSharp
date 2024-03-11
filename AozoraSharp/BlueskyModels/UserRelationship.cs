@@ -74,14 +74,13 @@ public readonly struct UserRelationship(
         profileViewer.FollowedBy)
     { }
 
-    // TODO: tree
     public async Task<DateTime?> FetchBlockStartedAtAsync(CancellationToken cancellationToken = default)
     {
         if (BlockRecordUri == null)
         {
             return null;
         }
-        var record = await Me.FetchRecordAsync(Me.Client, ATTypeName.GraphBlock, ATUtility.UriToRecordKey(BlockRecordUri), cancellationToken);
+        var record = await Me.FetchRecordAsync(ATTypeName.GraphBlock, ATUtility.UriToRecordKey(BlockRecordUri), cancellationToken);
         return record.Value is BlockRecord blockRecord
             ? blockRecord.CreatedAt
             : throw new InvalidRecordValueException(typeof(BlockRecord), record.Value?.GetType());
@@ -92,7 +91,7 @@ public readonly struct UserRelationship(
         {
             return null;
         }
-        var record = await Me.FetchRecordAsync(Me.Client, ATTypeName.GraphFollow, ATUtility.UriToRecordKey(FollowRecordUri), cancellationToken);
+        var record = await Me.FetchRecordAsync(ATTypeName.GraphFollow, ATUtility.UriToRecordKey(FollowRecordUri), cancellationToken);
         return record.Value is FollowRecord followRecord
             ? followRecord.CreatedAt
             : throw new InvalidRecordValueException(typeof(FollowRecord), record.Value?.GetType());
@@ -103,7 +102,7 @@ public readonly struct UserRelationship(
         {
             return null;
         }
-        var record = await Subject.FetchRecordAsync(Me.Client, ATTypeName.GraphFollow, ATUtility.UriToRecordKey(FollowedByRecordUri), cancellationToken);
+        var record = await Subject.FetchRecordAsync(ATTypeName.GraphFollow, ATUtility.UriToRecordKey(FollowedByRecordUri), cancellationToken);
         return record.Value is FollowRecord followRecord
             ? followRecord.CreatedAt
             : throw new InvalidRecordValueException(typeof(FollowRecord), record.Value?.GetType());

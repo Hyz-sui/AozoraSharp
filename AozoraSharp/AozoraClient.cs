@@ -32,10 +32,8 @@ public class AozoraClient : AozoraObject, IDisposable
         PublicApi = $"https://{publicApi}";
     }
 
-    /// <summary>
-    /// current logged in user
-    /// </summary>
-    public AozoraMyUser CurrentUser { get; private set; }
+    private AozoraMyUser myUser;
+    public override AozoraMyUser MyUser => myUser;
     /// <summary>
     /// access token
     /// </summary>
@@ -64,7 +62,7 @@ public class AozoraClient : AozoraObject, IDisposable
         var response = await PostCustomXrpcAsync<CreateSessionRequest, CreateSessionResponse>(ATEndpoint.CreateSession, request, cancellationToken);
         var myProfile = await FetchPublicProfileAsync(id, cancellationToken);
         var user = new AozoraMyUser(response, this, myProfile);
-        CurrentUser = user;
+        myUser = user;
         RenewToken(response.AccessJwt, response.RefreshJwt);
         return user;
     }
