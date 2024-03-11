@@ -48,10 +48,10 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="langs">language codes of the post</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, IEmbed embed = null, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, IEmbed embed = null, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         logger.Debug("Creating post");
-        var httpPost = new Post(text, DateTime.UtcNow, langs, embed, Via: Client.Option.PostVia);
+        var httpPost = new Post(text, createdAt == default ? DateTime.UtcNow : createdAt, langs, embed, Via: Client.Option.PostVia);
         var request = new CreatePostRequest(Did, collection, httpPost);
         var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
         var aozoraPost = new AozoraMyPost(this, this, httpPost, response);
@@ -65,10 +65,10 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="images">informations of the images</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embed = await UploadImagesAsync(images, cancellationToken);
-        return await CreatePostAsync(text, langs, embed, collection, cancellationToken);
+        return await CreatePostAsync(text, langs, embed, createdAt, collection, cancellationToken);
     }
     /// <summary>
     /// Create a quote post.
@@ -78,10 +78,10 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="postToQuote">post to quote</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embed = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
-        return await CreatePostAsync(text, langs, embed, collection, cancellationToken);
+        return await CreatePostAsync(text, langs, embed, createdAt, collection, cancellationToken);
     }
     /// <summary>
     /// Create a post with website card.
@@ -91,10 +91,10 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="uri">link to external website</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, string uri, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, string uri, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var externalInfo = await WebUtility.FetchExternalInfoFromUriAsync(uri, Client.HttpClient);
-        return await CreatePostAsync(text, langs, externalInfo, collection, cancellationToken);
+        return await CreatePostAsync(text, langs, externalInfo, createdAt, collection, cancellationToken);
     }
     /// <summary>
     /// Create a post with custom website card.
@@ -104,12 +104,12 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="externalInfo">informations of the website card</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, ExternalInfo externalInfo, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, ExternalInfo externalInfo, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var thumb = await externalInfo.UploadThumbnailAsync(this, cancellationToken);
         var external = new External(externalInfo.Uri, externalInfo.Title, externalInfo.Description, thumb);
         var embed = new EmbedExternal(external);
-        return await CreatePostAsync(text, langs, embed, collection, cancellationToken);
+        return await CreatePostAsync(text, langs, embed, createdAt, collection, cancellationToken);
     }
     /// <summary>
     /// Create a post with website card.
@@ -119,10 +119,10 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="uri">link to external website</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, string uri, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, string uri, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var externalInfo = await WebUtility.FetchExternalInfoFromUriAsync(uri, Client.HttpClient);
-        return await CreatePostAsync(text, langs, externalInfo, postToQuote, collection, cancellationToken);
+        return await CreatePostAsync(text, langs, externalInfo, postToQuote, createdAt, collection, cancellationToken);
     }
     /// <summary>
     /// Create a quote post with custom website card.
@@ -133,14 +133,14 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="externalInfo">informations of the website card</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, ExternalInfo externalInfo, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, ExternalInfo externalInfo, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embedRecord = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
         var thumb = await externalInfo.UploadThumbnailAsync(this, cancellationToken);
         var external = new External(externalInfo.Uri, externalInfo.Title, externalInfo.Description, thumb);
         var embedExternal = new EmbedExternal(external);
         var embed = new EmbedRecordWithMedia(embedRecord, embedExternal);
-        return await CreatePostAsync(text, langs, embed, collection, cancellationToken);
+        return await CreatePostAsync(text, langs, embed, createdAt, collection, cancellationToken);
     }
     /// <summary>
     /// Create a quote post with images.
@@ -151,12 +151,12 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     /// <param name="images">informations of the images</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, AozoraPost postToQuote, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var embedRecord = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
         var embedImages = await UploadImagesAsync(images, cancellationToken);
         var embed = new EmbedRecordWithMedia(embedRecord, embedImages);
-        return await CreatePostAsync(text, langs, embed, collection, cancellationToken);
+        return await CreatePostAsync(text, langs, embed, createdAt, collection, cancellationToken);
     }
 
     // TODO: should be moved
@@ -230,12 +230,12 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
         logger.Debug("Finished uploading blob");
         return response.Blob;
     }
-    internal async Task<AozoraMyPost> CreateReplyAsync(AozoraPost parent, AozoraPost root, string text, ICollection<string> langs, IEmbed embed = null, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    internal async Task<AozoraMyPost> CreateReplyAsync(AozoraPost parent, AozoraPost root, string text, ICollection<string> langs, IEmbed embed = null, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         var parentRef = new RecordStrongReference(parent.Uri, parent.Cid);
         var rootRef = new RecordStrongReference(root.Uri, root.Cid);
         var reply = new Reply(rootRef, parentRef);
-        var httpPost = new Post(text, DateTime.UtcNow, langs, embed, reply, Client.Option.PostVia);
+        var httpPost = new Post(text, createdAt == default ? DateTime.UtcNow : createdAt, langs, embed, reply, Client.Option.PostVia);
         var request = new CreatePostRequest(Did, collection, httpPost);
         var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
         var aozoraPost = new AozoraMyPost(this, this, httpPost, response)
