@@ -51,7 +51,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
     public async Task<AozoraMyPost> CreatePostAsync(string text, ICollection<string> langs, IEmbed embed = null, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
     {
         logger.Debug("Creating post");
-        var httpPost = new Post(text, DateTime.UtcNow.ToString("o"), langs, embed, Via: Client.Option.PostVia);
+        var httpPost = new Post(text, DateTime.UtcNow, langs, embed, Via: Client.Option.PostVia);
         var request = new CreatePostRequest(Did, collection, httpPost);
         var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
         var aozoraPost = new AozoraMyPost(this, this, httpPost, response);
@@ -235,7 +235,7 @@ public class AozoraMyUser(CreateSessionResponse createSessionResponse, AozoraCli
         var parentRef = new RecordStrongReference(parent.Uri, parent.Cid);
         var rootRef = new RecordStrongReference(root.Uri, root.Cid);
         var reply = new Reply(rootRef, parentRef);
-        var httpPost = new Post(text, DateTime.UtcNow.ToString("o"), langs, embed, reply, Client.Option.PostVia);
+        var httpPost = new Post(text, DateTime.UtcNow, langs, embed, reply, Client.Option.PostVia);
         var request = new CreatePostRequest(Did, collection, httpPost);
         var response = await Client.PostCustomXrpcAsync<CreatePostRequest, CreateRecordResponse>(ATEndpoint.CreateRecord, request, cancellationToken);
         var aozoraPost = new AozoraMyPost(this, this, httpPost, response)

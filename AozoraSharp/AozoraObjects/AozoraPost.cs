@@ -24,9 +24,7 @@ public class AozoraPost(
         myUser,
         author,
         post.Text,
-#pragma warning disable S6580
-        DateTime.Parse(post.CreatedAt),
-#pragma warning restore S6580
+        post.CreatedAt,
         uri,
         cid,
         post.Embed,

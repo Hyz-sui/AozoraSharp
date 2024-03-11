@@ -23,7 +23,7 @@ public class AozoraMyPost(
         myUser,
         author,
         post.Text,
-        DateTime.ParseExact(post.CreatedAt, "o", DateTimeFormatInfo.InvariantInfo),
+        post.CreatedAt,
         createRecordResponse.Uri,
         createRecordResponse.Cid)
     { }
