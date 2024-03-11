@@ -78,7 +78,7 @@ public class AozoraUser(
             ATEndpoint.ListRecords,
             [
                 new("repo", Did),
-                new("collection", RecordTypeName.Post),
+                new("collection", ATTypeName.FeedPost),
                 new("limit", limit.ToString()),
                 new("cursor", cursor),
                 new("reverse", reverse.ToString()),
