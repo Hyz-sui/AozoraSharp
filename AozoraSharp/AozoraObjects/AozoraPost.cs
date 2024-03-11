@@ -81,11 +81,11 @@ public class AozoraPost(
     /// <param name="embed">embed to attach</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IEmbed embed = null, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IEmbed embed = null, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         logger.Debug("Creating reply");
         var root = ReplyRoot ?? this;
-        return await author.CreateReplyAsync(this, root, text, langs, embed, createdAt, collection, cancellationToken);
+        return await author.CreateReplyAsync(this, root, text, langs, embed, createdAt, cancellationToken);
     }
     /// <summary>
     /// Create a reply with images.
@@ -96,10 +96,10 @@ public class AozoraPost(
     /// <param name="images">images to attach</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         var embedImages = await author.UploadImagesAsync(images, cancellationToken);
-        return await ReplyAsync(author, text, langs, embedImages, createdAt, collection, cancellationToken);
+        return await ReplyAsync(author, text, langs, embedImages, createdAt, cancellationToken);
     }
     /// <summary>
     /// Create a quote reply.
@@ -110,10 +110,10 @@ public class AozoraPost(
     /// <param name="postToQuote">post to quote</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, AozoraPost postToQuote, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         var embedPost = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
-        return await ReplyAsync(author, text, langs, embedPost, createdAt, collection, cancellationToken);
+        return await ReplyAsync(author, text, langs, embedPost, createdAt, cancellationToken);
     }
     /// <summary>
     /// Create a reply with website card.
@@ -124,10 +124,10 @@ public class AozoraPost(
     /// <param name="uri">link to external website</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         var externalInfo = await WebUtility.FetchExternalInfoFromUriAsync(uri, author.Client.HttpClient);
-        return await ReplyAsync(author, text, langs, externalInfo, createdAt, collection, cancellationToken);
+        return await ReplyAsync(author, text, langs, externalInfo, createdAt, cancellationToken);
     }
     /// <summary>
     /// Create a reply with custom website card.
@@ -138,12 +138,12 @@ public class AozoraPost(
     /// <param name="externalInfo">informations of the website card</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         var thumb = await externalInfo.UploadThumbnailAsync(author, cancellationToken);
         var external = new External(externalInfo.Uri, externalInfo.Title, externalInfo.Description, thumb);
         var embedExternal = new EmbedExternal(external);
-        return await ReplyAsync(author, text, langs, embedExternal, createdAt, collection, cancellationToken);
+        return await ReplyAsync(author, text, langs, embedExternal, createdAt, cancellationToken);
     }
     /// <summary>
     /// Create a reply with website card.
@@ -154,10 +154,10 @@ public class AozoraPost(
     /// <param name="uri">link to external website</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, string uri, AozoraPost postToQuote, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         var externalInfo = await WebUtility.FetchExternalInfoFromUriAsync(uri, author.Client.HttpClient);
-        return await ReplyAsync(author, text, langs, externalInfo, postToQuote, createdAt, collection, cancellationToken);
+        return await ReplyAsync(author, text, langs, externalInfo, postToQuote, createdAt, cancellationToken);
     }
     /// <summary>
     /// Create a quote reply with custom website card.
@@ -169,14 +169,14 @@ public class AozoraPost(
     /// <param name="externalInfo">informations of the website card</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, ExternalInfo externalInfo, AozoraPost postToQuote, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         var embedRecord = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
         var thumb = await externalInfo.UploadThumbnailAsync(author, cancellationToken);
         var external = new External(externalInfo.Uri, externalInfo.Title, externalInfo.Description, thumb);
         var embedExternal = new EmbedExternal(external);
         var embedRecordWithExternal = new EmbedRecordWithMedia(embedRecord, embedExternal);
-        return await ReplyAsync(author, text, langs, embedRecordWithExternal, createdAt, collection, cancellationToken);
+        return await ReplyAsync(author, text, langs, embedRecordWithExternal, createdAt, cancellationToken);
     }
     /// <summary>
     /// Create a quote reply with images.
@@ -188,11 +188,11 @@ public class AozoraPost(
     /// <param name="images">informations of the images</param>
     /// <param name="collection">Record type.<br/>Normally, you don't have to change this.</param>
     /// <returns>created post</returns>
-    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, AozoraPost postToQuote, DateTime createdAt = default, string collection = RecordTypeName.Post, CancellationToken cancellationToken = default)
+    public async Task<AozoraMyPost> ReplyAsync(AozoraMyUser author, string text, ICollection<string> langs, IReadOnlyList<ImageInfo> images, AozoraPost postToQuote, DateTime createdAt = default, CancellationToken cancellationToken = default)
     {
         var embedRecord = new EmbedRecord(new(postToQuote.Uri, postToQuote.Cid));
         var embedImages = await author.UploadImagesAsync(images, cancellationToken);
         var embedRecordWithImages = new EmbedRecordWithMedia(embedRecord, embedImages);
-        return await ReplyAsync(author, text, langs, embedRecordWithImages, createdAt, collection, cancellationToken);
+        return await ReplyAsync(author, text, langs, embedRecordWithImages, createdAt, cancellationToken);
     }
 }
